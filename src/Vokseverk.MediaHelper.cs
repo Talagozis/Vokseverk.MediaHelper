@@ -19,7 +19,10 @@ namespace Vokseverk {
 	}
 	
 	public class MediaHelper {
-		private readonly static UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+		private const int QUALITY_SETTING_70 = 70;
+		private const int QUALITY_SETTING_40 = 40;
+        
+        private readonly static UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
 		
 		/// <summary>
 		/// Render a <c>picture</c> tag with specified source elements
@@ -48,8 +51,8 @@ namespace Vokseverk {
 			
 			try {
 				foreach (var source in sources) {
-					var mediaURL1x = mediaItem.GetCropUrl(cropAlias: source.Crop, width: source.Width, quality: 70);
-					var mediaURL2x = mediaItem.GetCropUrl(cropAlias: source.Crop, width: source.Width * 2, quality: 40);
+					var mediaURL1x = mediaItem.GetCropUrl(cropAlias: source.Crop, width: source.Width, quality: QUALITY_SETTING_70);
+					var mediaURL2x = mediaItem.GetCropUrl(cropAlias: source.Crop, width: source.Width * 2, quality: QUALITY_SETTING_40);
 
 					if (string.IsNullOrEmpty(source.Media)) {
 						// Add required `<img>` tag
@@ -83,8 +86,8 @@ namespace Vokseverk {
 			try {
 				var media = umbracoHelper.TypedMedia(mediaId);
 				if (media != null) {
-					var crop1x = media.GetCropUrl(cropAlias: crop, width: width, quality: 70);
-					var crop2x = media.GetCropUrl(cropAlias: crop, width: width * 2, quality: 40);
+					var crop1x = media.GetCropUrl(cropAlias: crop, width: width, quality: QUALITY_SETTING_70);
+					var crop2x = media.GetCropUrl(cropAlias: crop, width: width * 2, quality: QUALITY_SETTING_40);
 					
 					imageTag = GetOutputTag(crop1x, crop2x, media.Name);
 				}
@@ -109,8 +112,8 @@ namespace Vokseverk {
 					// to not get a crop. Then build manually...
 					var url = media.Url;
 					var combiner = url.Contains("?") ? "&" : "?";
-					var size1x = string.Format("{0}{1}width={2}&quality=70", url, combiner, width);
-					var size2x = string.Format("{0}{1}width={2}&quality=40", url, combiner, width * 2);
+					var size1x = string.Format("{0}{1}width={2}&quality=" + QUALITY_SETTING_70, url, combiner, width);
+					var size2x = string.Format("{0}{1}width={2}&quality=" + QUALITY_SETTING_40, url, combiner, width * 2);
 					
 					var extension = media.GetPropertyValue<string>("umbracoExtension");
 					imageTag = extension == "gif"
